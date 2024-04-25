@@ -35,7 +35,8 @@ class Home extends StatelessWidget {
           children: [
             ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PostDioApi()));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => PostDioApi()));
                 },
                 child: Text(
                   "Dio Api Call",
@@ -43,9 +44,12 @@ class Home extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            ElevatedButton(onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>PostHttpApi()));
-            }, child: Text("Http Api Call")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PostHttpApi()));
+                },
+                child: Text("Http Api Call")),
             SizedBox(
               height: 30,
             ),

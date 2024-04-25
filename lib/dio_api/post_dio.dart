@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_apis/dio_api/single_post_dio.dart';
 import '../model/post_model.dart';
 
 class PostDioApi extends StatefulWidget {
@@ -11,6 +12,7 @@ class PostDioApi extends StatefulWidget {
 
 class _PostDioApiState extends State<PostDioApi> {
   List<PostModel> postList = [];
+
 
   @override
   void initState() {
@@ -24,10 +26,54 @@ class _PostDioApiState extends State<PostDioApi> {
       body: ListView.builder(
         itemCount: postList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(postList[index].title),
-            subtitle: Text(postList[index].body),
-          );
+          return Card(
+              elevation: 50,
+              shadowColor: Colors.black,
+              color: Colors.blue[100],
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          SinglePostDio(id: postList[index].id)));
+                },
+                child: SizedBox(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Text(
+                          'User Id : ${postList[index].id}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Id : ${postList[index].userId}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          ' Body : ${postList[index].body}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          ' Title : ${postList[index].title}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ));
         },
       ),
     );
@@ -53,3 +99,5 @@ class _PostDioApiState extends State<PostDioApi> {
     }
   }
 }
+
+
