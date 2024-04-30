@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_apis/dio_api/post_comments_dio.dart';
+import 'package:flutter_apis/dio_api_akash/post_comments_dio.dart';
 import '../model/post_model.dart';
 
 class SinglePostDio extends StatefulWidget {
@@ -26,30 +26,35 @@ class _SinglePostDioState extends State<SinglePostDio> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: 1,
-        itemBuilder: (context, index) {
-          if (postModel != null) {
-            return Card(
-                child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PostCommentsDio(id: postModel!.id)));
-              },
-              child: ListTile(
-                title: Text(postModel!.title),
-                subtitle: Text(postModel!.body),
-              ),
-            ));
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(" Single Post Api"),
+      ),
+      body: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            if (postModel != null) {
+              return Card(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PostCommentsDio(id: postModel!.id)));
+                    },
+                    child: ListTile(
+                      title: Text(postModel!.title),
+                      subtitle: Text(postModel!.body),
+                    ),
+                  ));
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
+    ) ;
   }
 
   Future<void> getSinglePostApi(int id) async {

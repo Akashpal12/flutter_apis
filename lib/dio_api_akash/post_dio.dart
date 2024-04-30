@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_apis/dio_api/single_post_dio.dart';
+import 'package:flutter_apis/dio_api_akash/single_post_dio.dart';
 import '../model/post_model.dart';
 
-class PostDioApi extends StatefulWidget {
-  const PostDioApi({super.key});
+class PostDioNewApi extends StatefulWidget {
+  const PostDioNewApi({super.key});
 
   @override
-  State<PostDioApi> createState() => _PostDioApiState();
+  State<PostDioNewApi> createState() => _PostDioApiState();
 }
 
-class _PostDioApiState extends State<PostDioApi> {
+class _PostDioApiState extends State<PostDioNewApi> {
   List<PostModel> postList = [];
 
 
@@ -23,6 +23,9 @@ class _PostDioApiState extends State<PostDioApi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Post Api"),
+      ),
       body: ListView.builder(
         itemCount: postList.length,
         itemBuilder: (context, index) {

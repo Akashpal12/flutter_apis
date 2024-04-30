@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_apis/dio_api/post_dio.dart';
-import 'package:flutter_apis/https_api/post_https.dart';
+
+import 'dio_api_akash/post_dio.dart';
+import 'https_api/post_https.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -35,8 +37,8 @@ class Home extends StatelessWidget {
           children: [
             ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => PostDioApi()));
+                 Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => PostDioNewApi()));
                 },
                 child: Text(
                   "Dio Api Call",

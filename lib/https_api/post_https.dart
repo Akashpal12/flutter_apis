@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_apis/https_api/single_post_https.dart';
 import 'package:flutter_apis/model/post_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,9 +27,17 @@ class _PostHttpApiState extends State<PostHttpApi> {
       body: ListView.builder(
         itemCount: postList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(postList[index].title),
-            subtitle: Text(postList[index].body),
+          return Card(
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SinglePostHttps()));
+              },
+              child: ListTile(
+                title: Text(postList[index].title),
+                subtitle: Text(postList[index].body),
+              ),
+            ),
           );
         },
       ),
@@ -44,7 +53,8 @@ class _PostHttpApiState extends State<PostHttpApi> {
         print('response is successful');
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          postList = jsonResponse.map((json) => PostModel.fromJson(json)).toList();
+          postList =
+              jsonResponse.map((json) => PostModel.fromJson(json)).toList();
         });
       } else {
         print('response is Failed');
