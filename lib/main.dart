@@ -1,10 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_apis/firebase/real_time_db/real_time_database.dart';
+import 'dio_api_akash/post_dio1.dart';
 
-import 'dio_api_akash/post_dio.dart';
-import 'https_api/post_https.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -49,7 +51,9 @@ class Home extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PostHttpApi()));
+                      //MaterialPageRoute(builder: (context) => PostHttpApi()));
+                      //MaterialPageRoute(builder: (context) => CameraScreen()));
+                      MaterialPageRoute(builder: (context) => RealTimeDB()));
                 },
                 child: Text("Http Api Call")),
             SizedBox(

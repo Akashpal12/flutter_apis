@@ -1,7 +1,9 @@
 plugins {
     id "com.android.application"
+    id "com.google.gms.google-services"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+
 }
 
 def localProperties = new Properties()
@@ -24,7 +26,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.flutter_apis"
-    compileSdk flutter.compileSdkVersion
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -42,10 +44,17 @@ android {
 
     defaultConfig {
         applicationId "com.example.flutter_apis"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "FA:1.0"
+        multiDexEnabled true
+    }
+    lintOptions {
+        checkReleaseBuilds false
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 
     buildTypes {
@@ -59,4 +68,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    implementation'com.google.firebase:firebase-database'
+    implementation'com.google.firebase:firebase-storage'
+}

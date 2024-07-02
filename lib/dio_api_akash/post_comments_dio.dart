@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:js_interop';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_apis/dio_api_akash/single_comments_dio.dart';
