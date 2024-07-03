@@ -15,13 +15,6 @@ class RealTimeDB extends StatefulWidget {
 
 class _RealTimeDBState extends State<RealTimeDB> {
   File? imageFile;
-  List<UserData> users = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchRecords();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,41 +76,12 @@ class _RealTimeDBState extends State<RealTimeDB> {
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  final user = users[index];
-                  return ListTile(
-                    title: Text(user.name),
-                    subtitle: Text('Age: ${user.age}'),
-                    leading: user.imageUrl != null
-                        ? Image.network(user.imageUrl!)
-                        : Image.network('https://via.placeholder.com/50'),
-                  );
-                },
-              ),
-            ),
           ],
         ),
       ),
     );
   }
-  Future<void> fetchRecords() async {
-    final databaseRef = FirebaseDatabase.instance.ref().child('users');
-    databaseRef.onValue.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      if (data != null) {
-        setState(() {
-          users = data.entries.map((entry) {
-            final userData = entry.value as Map<dynamic, dynamic>;
-            return UserData.fromJson(userData);
-          }).toList();
-          showToast('List Size: ${users.length}');
-        });
-      }
-    });
-  }
+
   Future<void> getImage({
     required ImageSource source,
     required void Function(void Function()) setState,
@@ -165,6 +129,8 @@ class _MyCardState extends State<MyCard> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  bool _saving = false; // Track whether data is being saved
+  double _uploadProgress = 0; // Track upload progress
 
   void _validateAndSave() async {
     if (_nameController.text.isEmpty) {
@@ -180,11 +146,29 @@ class _MyCardState extends State<MyCard> {
       return;
     }
 
-    widget.showToast('Saving data...');
-    Navigator.of(context).pop();
+    setState(() {
+      _saving = true; // Start saving state
+    });
+
     try {
-      final storageRef = FirebaseStorage.instance.ref().child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      final uploadTask = storageRef.putFile(widget.imageFile!);
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final uploadTask = storageRef.putFile(
+        widget.imageFile!,
+        // Create a metadata property to store information about the file
+        SettableMetadata(
+          contentType: 'image/jpeg',
+        ),
+      );
+
+      // Listen to the upload state changes
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        setState(() {
+          _uploadProgress = snapshot.bytesTransferred / snapshot.totalBytes;
+        });
+      });
+
       final snapshot = await uploadTask.whenComplete(() {});
       final imageUrl = await snapshot.ref.getDownloadURL();
 
@@ -197,11 +181,17 @@ class _MyCardState extends State<MyCard> {
       final databaseRef = FirebaseDatabase.instance.ref().child('users').push();
       await databaseRef.set(user.toJson());
 
+      Navigator.of(context).pop(); // Close the dialog
       widget.showToast('Record saved successfully');
-      //Navigator.of(context).pop();
+
     } catch (e) {
-      Navigator.of(context).pop();
-      //widget.showToast('Error saving data: $e');
+      Navigator.of(context).pop(); // Close the dialog
+      widget.showToast('Error saving data: $e');
+    } finally {
+      setState(() {
+        _saving = false; // End saving state
+        _uploadProgress = 0; // Reset progress
+      });
     }
   }
 
@@ -240,12 +230,12 @@ class _MyCardState extends State<MyCard> {
                   labelText: 'Please Enter Age',
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFF10202), width: 2.0),
+                    borderSide:
+                    BorderSide(color: Color(0xFFF10202), width: 2.0),
                   ),
                 ),
               ),
               SizedBox(height: 10),
-
               if (widget.imageFile != null)
                 Container(
                   width: 648,
@@ -263,16 +253,18 @@ class _MyCardState extends State<MyCard> {
                 )
               else
                 Image.network(
-                  'https://via.placeholder.com/200',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8uBcxORBL1dd26haxsL1qRDpLs0_sIaciIQ&s',
                   height: 200,
                   fit: BoxFit.cover,
                 ),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: widget.onCameraPressed,
-                    child: Text('Camera', style: TextStyle(color: Colors.white)),
+                    child:
+                    Text('Camera', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF006064),
                       textStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -280,7 +272,8 @@ class _MyCardState extends State<MyCard> {
                   ),
                   ElevatedButton(
                     onPressed: widget.onGalleryPressed,
-                    child: Text('Gallery', style: TextStyle(color: Colors.white)),
+                    child:
+                    Text('Gallery', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF006064),
                       textStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -288,15 +281,31 @@ class _MyCardState extends State<MyCard> {
                   ),
                 ],
               ),
+              // Display progress indicator if saving
               SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _validateAndSave,
-                child: Text('Save Record', style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF006064),
-                  textStyle: TextStyle(fontWeight: FontWeight.bold),
+              if (_saving)
+                Column(
+                  children: [
+                    LinearProgressIndicator(
+                      value: _uploadProgress,
+                      minHeight: 10,
+                      backgroundColor: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    SizedBox(height: 10),
+                    Text('${(_uploadProgress * 100).toStringAsFixed(2)}%'),
+                  ],
+                )
+              else
+                ElevatedButton(
+                  onPressed: _validateAndSave,
+                  child: Text('Save Record',
+                      style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF006064),
+                    textStyle: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

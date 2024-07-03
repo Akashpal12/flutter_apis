@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_apis/firebase/real_time_db/real_time_database.dart';
 import 'dio_api_akash/post_dio1.dart';
+import 'firebase/real_time_db/real_time_database.dart';
 
 
 void main() async {

@@ -12,4 +12,11 @@ class UserData {
       'imageUrl': imageUrl,
     };
   }
+  factory UserData.fromJson(Map<dynamic, dynamic> json) {
+    return UserData(
+      name: json['name'] as String,
+      age: json['age'] as int,
+      imageUrl: json['imageUrl'] as String,
+    );
+  }
 }
