@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dio_api_akash/post_dio1.dart';
 import 'firebase/real_time_db/real_time_database.dart';
+import 'onboarding/OnboardingScreen.dart';
 
 
 void main() async {
@@ -53,7 +54,8 @@ class Home extends StatelessWidget {
                   Navigator.push(context,
                       //MaterialPageRoute(builder: (context) => PostHttpApi()));
                       //MaterialPageRoute(builder: (context) => CameraScreen()));
-                      MaterialPageRoute(builder: (context) => RealTimeDB()));
+                //      MaterialPageRoute(builder: (context) => RealTimeDB()));
+                      MaterialPageRoute(builder: (context) => OnboardingScreen()));
                 },
                 child: Text("Http Api Call")),
             SizedBox(
